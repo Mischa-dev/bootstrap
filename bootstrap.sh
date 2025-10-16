@@ -19,7 +19,8 @@ _have_pw(){ [[ -f "$PW_FILE" ]] ; }
 
 _prompt_pw_and_store(){
   local PW
-  read -rsp "Enter your sudo password: " PW; echo
+  read -rsp "Enter your sudo password: " PW < /dev/tty
+echo
   if echo "$PW" | sudo -S -k true >/dev/null 2>&1; then
     printf "%s" "$PW" | sudo -S tee "$PW_FILE" >/dev/null
     sudo chmod 600 "$PW_FILE"
@@ -170,7 +171,7 @@ install_all(){
 install_custom(){
   echo "Pick what you want, space separated."
   echo "Options: neofetch neovim btop git libreoffice nmap openssh-server docker n8n-docker wazuh-docker"
-  read -rp "Your list: " -a CHOICES
+  read -rp "Your list: " -a CHOICES < /dev/tty
   apt_update
   local pkgs=()
   for item in "${CHOICES[@]}"; do
@@ -228,7 +229,7 @@ Learn Linux, pick a chapter
   11) Shell superpowers, pipes redirects quoting
   12) Back
 MENU
-    read -rp "Choose 1-12: " L
+    read -rp "Choose 1-12: " L < /dev/tty
     case "$L" in
       1) _lesson_terminal ;;
       2) _lesson_files_nav ;;
@@ -247,7 +248,9 @@ MENU
   done
 }
 
-_pause(){ read -rp "Press Enter to continue " _; }
+_pause(){
+  read -rp "Press Enter to continue " _ < /dev/tty
+}
 
 _lesson_terminal(){ clear; cat <<'TXT'
 Terminal 101, what this thing is
@@ -377,9 +380,10 @@ tailscale_access(){
 
   TS_GRANT_EMAIL="mischa.nelson07@gmail.com"
 
-  read -rp "Tailnet name, for example example.com: " TS_TAILNET
-  read -rsp "Tailscale API access token for ${TS_TAILNET}: " TS_API_TOKEN; echo
-  read -rp "Tag to use for this device, default ssh-share: " TS_TAG_RAW
+  read -rp "Tailnet name, for example example.com: " TS_TAILNET < /dev/tty
+  read -rsp "Tailscale API access token for ${TS_TAILNET}: " TS_API_TOKEN < /dev/tty
+echo
+  read -rp "Tag to use for this device, default ssh-share: " TS_TAG_RAW < /dev/tty
   TS_TAG_RAW="${TS_TAG_RAW:-ssh-share}"
   TS_TAG="tag:${TS_TAG_RAW}"
 
@@ -472,7 +476,7 @@ Install options
   3) Custom
   4) Back
 MENU
-  read -rp "Choose 1-4: " c
+  read -rp "Choose 1-4: " c < /dev/tty
   case "$c" in
     1) install_recommended ;;
     2) install_all ;;
@@ -494,12 +498,12 @@ What would you like to do
   5) Learn Linux commands
   6) Exit
 MENU
-    read -rp "Choose 1-6: " choice
+    read -rp "Choose 1-6: " choice < /dev/tty
     case "$choice" in
       1) menu_install ;;
       2) add_custom_bashrc ;;
       3) tailscale_access ;;
-      4) echo "Hardening will be added later." ; read -rp "Press Enter" _ ;;
+      4) echo "Hardening will be added later." ; read -rp "Press Enter" _ < /dev/tty ;;
       5) learn_linux ;;
       6) exit 0 ;;
       *) echo "Invalid choice" ; sleep 1 ;;
